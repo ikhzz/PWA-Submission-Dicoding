@@ -1,0 +1,26 @@
+.sidenav img {
+    width: 50px;
+}
+.sidenav li:first-child a {
+    box-sizing: content-box;
+    padding: 10px 32px;
+} 
+.sidenav {
+    display: grid;
+    padding: 50px 20px 0px;
+    align-items: baseline;
+    align-content: flex-start;
+}
+.sidenav li {
+    padding: 10px;
+    
+}
+.sidenav li a {
+    border-radius: 10px;
+}
+.nav-wrapper a img {
+    width: 200px;
+}
+a.sidenav-trigger {
+    font-size: 30px;
+}
