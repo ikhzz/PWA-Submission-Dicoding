@@ -5,8 +5,11 @@
   <title>My First PWA</title>
   <meta name="description" content="My first PWA"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00897B"/>
   <link rel="stylesheet" href="css/materialize.min.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -16,25 +19,24 @@
       <a href="#!" class="brand-logo"><img src="img/tmdb2.svg" alt=""></a>
       <a href="#" data-target="mobile-demo" class="sidenav-trigger">&#9776;</i></a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="sass.html">Sass</a></li>
-        <li><a href="badges.html">Components</a></li>
-        <li><a href="collapsible.html">Javascript</a></li>
-        <li><a href="mobile.html">Mobile</a></li>
+        <li class="link"><a href="#home">Home</a></li>
+        <li class="link"><a href="#topratedm">Movie Top Rated</a></li>
+        <li class="link"><a href="#topratedtv">Tv Show Top Rated</a></li>
+        <li class="link"><a href="#upcoming">Upcoming Movie</a></li>
       </ul>
     </div>
   </nav>
 
   <ul class="sidenav" id="mobile-demo">
-    <li class=""><a href=""><img src="img/tmd3.svg" alt=""></a></li>
-    <li class=""><a href="sass.html">Sass</a></li>
-    <li class=""><a href="badges.html">Components</a></li>
-    <li class=""><a href="collapsible.html">Javascript</a></li>
-    <li class=""><a href="mobile.html">Mobile</a></li>
+    <li class="link"><a href=""><img src="img/tmd3.svg" alt=""></a></li>
+    <li class="link"><a href="#home">Home</a></li>
+    <li class="link"><a href="#topratedm">Movie Top Rated</a></li>
+    <li class="link"><a href="#topratedtv">Tv Show Top Rated</a></li>
+    <li class="link"><a href="#upcoming">Upcoming Movie</a></li>
   </ul>
   <!-- Akhir Navigasi -->
 
   <div class="body-content container"></div>
-
   <script src="js/materialize.min.js"></script>
   <script src="js/script.js"></script>
 </body>

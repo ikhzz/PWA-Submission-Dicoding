@@ -1,3 +1,5 @@
+/* Navigation */
+
 .sidenav img {
     width: 50px;
 }
@@ -23,4 +25,82 @@
 }
 a.sidenav-trigger {
     font-size: 30px;
+}
+
+/* Home */
+.home {
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    padding-top: 50px;
+}
+.home img {
+    border-radius: 50%;
+}
+.home-icon {
+    margin: 10px auto 0px;
+    display: table;
+}
+.home-icon a{
+    color: black;
+    margin-right: 20px;
+}
+
+/* Content */
+.row {
+    padding-top: 30px;
+}
+
+.col.s4 img{
+    width: 100%;
+}
+
+/* Scrore */
+.score {
+    display: flex;
+    align-items: center;
+}
+.score div:not(:last-child) {
+    margin-right: 10px;
+}
+.percent {
+    position: relative;
+}
+.percent p {
+    color: white;
+    position: absolute;
+    top: 0px;
+    left: 14px;
+    font-size: 12px;
+}
+svg {
+    width: 45px;
+    height: 45px;
+}
+svg circle {
+    width: 100%;
+    height: 100%;
+    fill: black;
+    stroke: #191919;
+    stroke-width: 4;
+    stroke-linecap: round;
+    transform: translate(5px, 5px);
+}
+.percent svg circle:nth-child(2) {
+    stroke: #00ff43;
+    stroke-dasharray: 107;
+}
+
+/* Media setting */
+
+@media only screen and (min-width: 993px) {
+    .body-content.container {
+        width: 99%;
+    }
+}
+
+@media only screen and (max-width: 601px) {
+    .row .col.s12.m6:not(:last-child) {
+        margin-bottom: 50px;
+    }
 }
