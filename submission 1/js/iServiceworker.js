@@ -1,5 +1,6 @@
-const CACHE_NAME = "firstpwa-v1";
+const CACHE_NAME = "firstpwa-v2";
 var urlsToCache = [
+  "/",
   "../manifest.json",
   "../index.html",
   "../pages/home.html",
@@ -9,12 +10,13 @@ var urlsToCache = [
   "../css/materialize.min.css",
   "../css/materialize.css",
   "../css/style.css",
-  "../js/materialize.min.js",
-  "../js/materialize.js",
-  "../js/script.js",
+  "materialize.min.js",
+  "materialize.js",
+  "script.js",
   "../img/logo.JPG",
   "../img/tmd3.svg",
   "../img/tmdb2.svg",
+  "../img/maskable_192x192.png",
   "../img/pwa-192x192.png",
   "../img/pwa-512x512.png",
   "../img/assets/Batman.jpg",
@@ -24,7 +26,6 @@ var urlsToCache = [
   "../img/assets/Shieldhero.jpg",
   "../img/assets/tenet.jpg",
   "../img/assets/therental.jpg",
-  
 ];
  
 self.addEventListener("install", function(event) {
