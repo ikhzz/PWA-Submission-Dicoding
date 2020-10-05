@@ -36,7 +36,7 @@ function service() {
 	if ("serviceWorker" in navigator) {
 		window.addEventListener("load", function() {
 		  navigator.serviceWorker
-			.register("js/iServiceworker.js")
+			.register("iServiceworker.js")
 			.then(function() {
 			  console.log("Pendaftaran ServiceWorker berhasil");
 			})
