@@ -16,8 +16,9 @@ elements.addEventListener('click', () => {
 function loadPage(page) {
 	const xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = () => {
+		const content = document.querySelector(".body-content")
 		if (xhttp.readyState === 4 && xhttp.status === 200){
-			document.querySelector(".body-content").innerHTML = xhttp.responseText;
+			content.innerHTML = xhttp.responseText;
 		} else if(xhttp.status == 404) {
 				content.innerHTML = "<p>Halaman tidak ditemukan.</p>";
 		} else {
