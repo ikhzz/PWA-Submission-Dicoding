@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
 const elems = document.querySelector('.sidenav');
 M.Sidenav.init(elems);
 loadPage('home');

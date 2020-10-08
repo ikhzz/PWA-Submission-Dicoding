@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>My First PWA</title>
+  <meta name="description" content="My first PWA"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00897B"/>
+  <link rel="stylesheet" href="css/materialize.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="img/pwa-192x192.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="img/ios-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/ios-180x180.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="img/ios-167x167.png">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="shortcut icon" href="img/pwa-192x192.png">
+  <link href="img/ios-750x1334.png" sizes="750x1334" rel="apple-touch-startup-image" />
+  <link href="img/ios-1242x2208.png" sizes="1242x2208" rel="apple-touch-startup-image" />
+</head>
+<body>
+
+  <!-- Navigasi -->
+  <nav class="blue-grey darken-3">
+    <div class="nav-wrapper container">
+      <a href="#!" class="brand-logo"><img src="img/football.svg" alt=""></a>
+      <a href="#" data-target="mobile-demo" class="sidenav-trigger">&#9776;</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li class="link"><a href="#home">Home</a></li>
+        <li class="link"><a href="#content">Content</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav blue-grey darken-3" id="mobile-demo">
+    <li class="link"><a href=""><img src="img/football.svg" alt=""></a></li>
+    <li class="link"><a href="#home">Home</a></li>
+    <li class="link"><a href="#content">Content</a></li>
+    <!-- <li class="link"><a href="#matches">Matches</a></li>
+    <li class="link"><a href="#bookmark">Bookmark</a></li> -->
+  </ul>
+  <!-- Akhir Navigasi -->
+
+  <div class="body-content container">
+    
+  </div>
+  <script src="js/materialize.min.js"></script>
+  <script type=module src="js/config.js"></script>
+  <script type="module" src="js/script.js"></script>
+  <script src="js/sw-register.js"></script>
+</body>
+</html>
