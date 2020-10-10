@@ -1,7 +1,10 @@
-import {api_key, base_url, crest_url} from './config.js';
+import {api_key, api_url, crest_url, loading} from './config.js';
 
-const elems = document.querySelector('.sidenav');
-let links = document.querySelectorAll('.link a')
+const 	elems = document.querySelector('.sidenav'),
+		emsg = ['Data fetch failed', 'Data not found', 'Page not found'],
+		content = document.querySelector(".body-content")
+let 	links = document.querySelectorAll('.link a')
+	
 
 document.addEventListener('DOMContentLoaded', () => {        
     M.Sidenav.init(elems);
@@ -16,30 +19,36 @@ function link(data) {
             if(page == 'home') {
                 loadPage(page)
             } else if(page == 'teams') {
-                loadPage(page)
-                loadData(base_url)
+				loadData(api_url, page)
             } else if(page == 'matches') {
-				loadPage(page)
 				const data = elements.getAttribute('data-id')
-				loadmatch(`${base_url}${data}/${page}?status=SCHEDULED`)
-            }
+				loadmatch(`${api_url}${data}/${page}?status=SCHEDULED`, page)
+            } else {
+				loadPage('error', emsg[2])
+			}
             M.Sidenav.getInstance(elems).close();
         })    
     })
 }
 
-function loadPage(data) {
+function loadPage(data, msg) {
 	const url = `pages/${data}.html`
 	fetch(url)
 	  .then(response => response.text())
 	  .then(response => {
-		const content = document.querySelector(".body-content")
-		 content.innerHTML = response
+		content.innerHTML = response
+
+		if(content.querySelector('.emsg')) {
+			content.querySelector('.emsg').innerHTML = msg
+		}
 	  })
+	.catch(response => {
+		console.log(response)
+	})
 };
 
-function loadData(data) {
-	document.querySelector('.loading').classList.toggle('loadings')
+function loadData(data, page) {
+	loading()
 	fetch(data, {
 		headers : {
 			'X-Auth-Token' : api_key
@@ -47,7 +56,6 @@ function loadData(data) {
 	})
 	  .then(response => response.json())
 	  .then(response => {
-		
 		  //console.log(response)
 		  response.teams.forEach(e => {
 			  document.querySelector('.row.teams').innerHTML += `
@@ -74,53 +82,68 @@ function loadData(data) {
 			  </div>
 			  `;
 		  })
-		  document.querySelector('.loading').classList.toggle('loadings')
         links = document.querySelectorAll('.link a')
-	    link(links)
-	  })  
+		link(links)
+		loading()
+	  })
+	  .catch(response => {
+		console.log(response)
+		loadPage('error', emsg[0])
+		loading()
+	  })
+	  loadPage(page)
 };
-function loadmatch(data) {
-	document.querySelector('.loading').classList.toggle('loadings')
+
+function loadmatch(data, page) {
+	loading()
 	fetch(data, {
 		headers : {
 			'X-Auth-Token' : api_key
 		}
 	})
-	  .then(response => response.json())
-	  .then(response => {
-		
-		  console.log(response.matches)
-		  console.log(response.matches[0].awayTeam.id)
-		  response.matches.forEach(e => {
-			  document.querySelector('.row.matches').innerHTML += `
-			  <div class="col s12 m6 l3">
-        	    <div class="icards">
-          		  <div class="title">
-            		<h5>${e.competition.name}</h5>
-          	      </div>
-          	      <div class="info">
-                    <div>
-                      <p>${e.homeTeam.name}</p>
-                      <img src="${crest_url}${e.homeTeam.id}.svg" alt="">
-                    </div>
-                    <p>VERZUZ</p>
-                    <!-- maybe a swordsfight scene or something -->
-                    <div>
-                      <p>${e.awayTeam.name}</p>
-                      <img src="${crest_url}${e.awayTeam.id}.svg" alt="">
-                    </div>
-                  </div>
-                  <div class="setting">
-                    <div>
-                      <p>${e.utcDate}</p>
-                    </div>
-                    <div>
-                      <a class="waves-effect waves-light btn-small">Bookmark</a>
-                    </div>
-                  </div>
-                </div>
-              </div>`;
-		  })
-		  document.querySelector('.loading').classList.toggle('loadings')
-	  })  
+	.then(response => response.json())
+	.then(response => {
+		if(response.matches.length > 0) {
+		response.matches.forEach(e => {
+			const date = (new Date(Date.parse(e.utcDate))).toString().split('+')[0]
+			document.querySelector('.row.matches').innerHTML += `
+			<div class="col s12 m6 l3">
+			  <div class="icards">
+				<div class="title">
+				  <h5>${e.competition.name}</h5>
+				</div>
+				<div class="info">
+				<div>
+					<p>${e.homeTeam.name}</p>
+					<img src="${crest_url}${e.homeTeam.id}.svg" alt="">
+				</div>
+				<p>VERZUZ</p>
+				<!-- maybe a swordsfight scene or something -->
+				<div>
+					<p>${e.awayTeam.name}</p>
+					<img src="${crest_url}${e.awayTeam.id}.svg" alt="">
+				</div>
+				</div>
+				<div class="setting">
+				<div>
+					<p>${date}</p>
+				</div>
+				<div>
+					<a class="waves-effect waves-light btn-small">Bookmark</a>
+				</div>
+				</div>
+			  </div>
+			</div>`;
+			})
+		} else {
+			loadPage('error', emsg[1])
+		}
+		loading()
+	})
+	.catch(response => {
+	    console.log(response)
+	    loadPage('error', emsg[0])
+	    loading()
+	})
+	loadPage(page)
 };
