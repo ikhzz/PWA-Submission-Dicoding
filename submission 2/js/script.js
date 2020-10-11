@@ -1,29 +1,31 @@
 import {api_key, api_url, crest_url, loading} from './config.js';
+import {startDb, writeDb, readDb} from './indexDB.js'
 
 const 	elems = document.querySelector('.sidenav'),
 		emsg = ['Data fetch failed', 'Data not found', 'Page not found'],
 		content = document.querySelector(".body-content")
 let 	links = document.querySelectorAll('.link a')
-	
 
+		
 document.addEventListener('DOMContentLoaded', () => {        
     M.Sidenav.init(elems);
     //loadPage('home');
-    link(links)
+	link(links)
+	startDb()
 });
    
 function link(data) {
     data.forEach(elements => {
         elements.addEventListener('click', () => {
             const page = elements.getAttribute('href').split('#')[1]
-            if(page == 'home') {
+            if(page == 'home' || page == 'bookmark') {
                 loadPage(page)
             } else if(page == 'teams') {
 				loadData(api_url, page)
             } else if(page == 'matches') {
 				const data = elements.getAttribute('data-id')
 				loadmatch(`${api_url}${data}/${page}?status=SCHEDULED`, page)
-            } else {
+			} else {
 				loadPage('error', emsg[2])
 			}
             M.Sidenav.getInstance(elems).close();
@@ -37,9 +39,11 @@ function loadPage(data, msg) {
 	  .then(response => response.text())
 	  .then(response => {
 		content.innerHTML = response
-
 		if(content.querySelector('.emsg')) {
 			content.querySelector('.emsg').innerHTML = msg
+		}
+		if(document.querySelector('.row.bookmark')) {
+			readDb()
 		}
 	  })
 	.catch(response => {
@@ -103,38 +107,40 @@ function loadmatch(data, page) {
 	})
 	.then(response => response.json())
 	.then(response => {
+		//console.log(response.matches)
 		if(response.matches.length > 0) {
-		response.matches.forEach(e => {
-			const date = (new Date(Date.parse(e.utcDate))).toString().split('+')[0]
-			document.querySelector('.row.matches').innerHTML += `
-			<div class="col s12 m6 l3">
-			  <div class="icards">
-				<div class="title">
-				  <h5>${e.competition.name}</h5>
-				</div>
-				<div class="info">
-				<div>
-					<p>${e.homeTeam.name}</p>
-					<img src="${crest_url}${e.homeTeam.id}.svg" alt="">
-				</div>
-				<p>VERZUZ</p>
-				<!-- maybe a swordsfight scene or something -->
-				<div>
-					<p>${e.awayTeam.name}</p>
-					<img src="${crest_url}${e.awayTeam.id}.svg" alt="">
-				</div>
-				</div>
-				<div class="setting">
-				<div>
-					<p>${date}</p>
-				</div>
-				<div>
-					<a class="waves-effect waves-light btn-small">Bookmark</a>
-				</div>
-				</div>
-			  </div>
-			</div>`;
-			})
+			response.matches.forEach(e => {
+				window.writeDb = writeDb;
+				const date = (new Date(Date.parse(e.utcDate))).toString().split('+')[0]
+				document.querySelector('.row.matches').innerHTML += `
+				<div class="col s12 m6 l3">
+				  <div class="icards">
+					<div class="title">
+					  <h5>${e.competition.name}</h5>
+					</div>
+					<div class="info">
+					  <div>
+						<p>${e.homeTeam.name}</p>
+						<img src="${crest_url}${e.homeTeam.id}.svg" alt="">
+					  </div>
+					  <p>VERZUZ</p>
+					    <!-- maybe a swordsfight scene or something -->
+					  <div>
+						<p>${e.awayTeam.name}</p>
+						<img src="${crest_url}${e.awayTeam.id}.svg" alt="">
+					  </div>
+					</div>
+					<div class="setting">
+					  <div>
+						<p>${date}</p>
+					  </div>
+					  <div>
+						<a class="waves-effect waves-light btn-small" onclick="writeDb(${e.id}, '${e.competition.name}', '${e.homeTeam.name}', '${e.homeTeam.id}', '${e.awayTeam.name}', '${e.awayTeam.id}', '${date}')">Bookmark</a>
+					  </div>
+					</div>
+				  </div>
+				</div>`;
+				})
 		} else {
 			loadPage('error', emsg[1])
 		}
