@@ -3,6 +3,6 @@
 ###### Guide    : Dicoding
 ###### Note     : Baparekraf Developer Day 2020
 
-###### Assets   : www.themoviedb.org, Materialize framework, Jake archibald's indexedDB promised
+###### Assets   : www.themoviedb.org, Materialize framework
 ###### Api      : www.football-data.org
 ###### Others   : www.Google.com

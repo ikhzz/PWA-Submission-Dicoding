@@ -1,11 +1,11 @@
 import {api_key, api_url, crest_url, loading} from './config.js';
-import {writeDb, readDb, matchDb, cancelDb} from './indexDB.js'
+import {writeDb, readDb, matchDb, cancelDb, deleteDb} from './indexDB.js'
 
-const 	elems = document.querySelector('.sidenav'),
-		emsg = ['Data fetch failed', 'Data not found', 'Page not found'],
-		content = document.querySelector(".body-content")
+
+const elems = document.querySelector('.sidenav'),
+		  emsg = ['Data fetch failed', 'Data not found', 'Page not found'],
+		  content = document.querySelector(".body-content")
 let 	links = document.querySelectorAll('.link a')
-
 		
 document.addEventListener('DOMContentLoaded', () => {        
     M.Sidenav.init(elems);
@@ -18,16 +18,18 @@ const link = (data) => {
         elements.addEventListener('click', () => {
             const page = elements.getAttribute('href').split('#')[1]
             
-            if(page == 'home' || page == 'bookmark') {
-                loadPage(page)
+            if(page == 'home') {
+              loadPage(page)
             } else if(page == 'teams') {
-				loadTeam(api_url, page)
+              loadTeam(api_url, page)
+            } else if(page == 'bookmark'){
+              loadBookmark(page)
             } else if(page == 'matches') {
-				const data = elements.getAttribute('data-id')
-				loadMatch(`${api_url}${data}/${page}?status=SCHEDULED`, page)
-			} else {
+				      const data = elements.getAttribute('data-id')
+				      loadMatch(`${api_url}${data}/${page}?status=SCHEDULED`, page)
+			      } else {
                 loadPage('error', emsg[2])
-			}
+			      }
             M.Sidenav.getInstance(elems).close();
         })    
     })
@@ -35,44 +37,42 @@ const link = (data) => {
 
 const loadPage = (data, msg)=> {
 	loading()
-    return new Promise((resolve) => {
-        const url = `pages/${data}.html`
-	    fetch(url)
-	      .then(response => response.text())
-	      .then(response => {
-              content.innerHTML = response
-              if(content.querySelector('.emsg')) {
-                content.querySelector('.emsg').innerHTML = msg
-              }
-              if(document.querySelector('.row.bookmark')) {
-                readDb()
-                loading()
-              }
-              if(document.querySelector('.home')){
-                  loading()
-              }
-          })
-          resolve('')
-
+  return new Promise((resolve) => {
+    const url = `pages/${data}.html`
+	  fetch(url)
+	    .then(response => response.text())
+	    .then(response => {
+        content.innerHTML = response
+        if(content.querySelector('.emsg')) {
+          content.querySelector('.emsg').innerHTML = msg
+        }
+        if(document.querySelector('.home')){
+          loading()
+        }
+        resolve()
+      })
     })
 }
 const fetchData = (url) =>{
     return new Promise((resolve,reject) => {
-        fetch(url, {
-            headers : {
-                'X-Auth-Token' : api_key
-            }
-        })
-          .then(response => response.json())
-          .then(response => resolve(response))
-    })	
+      fetch(url, {
+          headers : {
+              'X-Auth-Token' : api_key
+          }
+      })
+        .then(response => response.json())
+        .then(response => resolve(response))
+        .catch(r => reject(r))
+    })
 }
 
 const loadTeam = async(url, page) => {
     await loadPage(page).then()
     const result = await fetchData(url)
                           .then(r => r)
-    result.teams.forEach( async(e) => {
+                          .catch(r => r)
+    if(result.teams != undefined) {
+        result.teams.forEach( async(e) => {
         document.querySelector('.row.teams').innerHTML += `
         <div class="col s12 m6 l3">
           <div class="card">
@@ -96,25 +96,27 @@ const loadTeam = async(url, page) => {
           </div>
         </div>
         `;
-    })
-    links = document.querySelectorAll('.link a')
-	link(links)
-	loading()
+        })
+      links = document.querySelectorAll('.link a')
+      link(links)
+      loading()
+    } else {
+      loadPage('error', emsg[0])  
+    }
 }
 
 const loadMatch = async(url, page) => {
     await loadPage(page).then()
     const result = await fetchData(url, page)
                           .then(r => r)
-                          .catch(e => 0)
-	if(result.matches.length > 0) {
+                          .catch(r => r)
+	if(result.matches != undefined && result.matches.length > 0) {
 		result.matches.forEach( async(e) => {
 			let button = '',
-				action = ''
-			const 	matchs = await matchDb(e.id),
-					date = (new Date(Date.parse(e.utcDate))).toString().split('+')[0]
+			    action = ''
+			const matchs = await matchDb(e.id),
+					  date = (new Date(Date.parse(e.utcDate))).toString().split('+')[0]
 			if(matchs == undefined) {
-				//console.log('HAKAI')
 				button = 'Bookmark'
 				action = `writeDb(${e.id}, '${e.competition.name}', '${e.homeTeam.name}', '${e.homeTeam.id}', '${e.awayTeam.name}', '${e.awayTeam.id}', '${date}', '${url}', '${page}')`;
 				window.writeDb = writeDb;
@@ -153,10 +155,52 @@ const loadMatch = async(url, page) => {
 			  </div>`;
 		})
 		loading()
-	} else {
-		loadPage('error', emsg[1])
-		loading()
-    }
+  } else {
+    loadPage('error', emsg[0])
+  }
 }
 
-export {loadMatch}
+const loadBookmark = async(page) => {
+  await loadPage(page).then()
+  const result = await readDb().then(r => r),
+        selector = document.querySelector('.row.bookmark')
+  selector.innerHTML = ''
+  if(result.length > 0) {
+    result.forEach( e => {
+      window.deleteDb = deleteDb
+      selector.innerHTML += `
+        <div class="col s12 m6 l3">
+          <div class="icards">
+            <div class="title">
+                <h5>${e.compName}</h5>
+            </div>
+          <div class="info">
+            <div>
+              <p>${e.homeTeamName}</p>
+              <img src="${crest_url}${e.homeTeamId}.svg" alt="">
+            </div>
+            <p>VERZUZ</p>
+            <!-- maybe a swordsfight scene or something -->
+            <div>
+              <p>${e.awayTeamName}</p>
+              <img src="${crest_url}${e.awayTeamId}.svg" alt="">
+            </div>
+          </div>
+          <div class="setting">
+            <div>
+              <p>${e.date}</p>
+            </div>
+            <div>
+              <a class="waves-effect waves-light btn-small" onclick="deleteDb(${e.id}, '${page}')">Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    })
+    loading()
+  } else {
+    loadPage('error', emsg[1])
+  }
+}
+
+export {loadMatch, loadBookmark}

@@ -1,5 +1,5 @@
-import {crest_url, db_name, db_version, db_table, loading} from './config.js'
-import {loadMatch} from './script.js'
+import {db_name, db_version, db_table} from './config.js'
+import {loadMatch, loadBookmark} from './script.js'
 
 
 if(window.indexedDB) {
@@ -16,7 +16,48 @@ if(window.indexedDB) {
         }
     })();
 } else {
-    console.log('indexeddb is not supported')
+    console.log('indexedDB is not supported')
+}
+
+const readDb = () => {
+    return new Promise(resolve => {
+      const open = indexedDB.open(db_name, db_version)
+      open.onsuccess = () => {
+        const db = open.result,
+              tx = db.transaction(db_table, 'readonly'),
+              store = tx.objectStore(db_table),
+              request = store.getAll()
+              request.onsuccess = e => {
+                resolve(e.target.result)
+              }
+      }
+    })
+}
+
+const deleteDb = (id, page) => {
+    const open = indexedDB.open(db_name, db_version)
+    open.onsuccess = () => {
+        const   db = open.result,
+                tx = db.transaction(db_table, 'readwrite'),
+                request = tx.objectStore(db_table)
+        request.delete(id)
+    }
+    loadBookmark(page)
+}
+
+const matchDb = (id) => {
+    return new Promise( (resolve, reject)=> {
+        const open = indexedDB.open(db_name, db_version)
+        open.onsuccess = () => {
+            const db = open.result,
+                  tx = db.transaction(db_table, 'readonly'),
+                  store = tx.objectStore(db_table),
+                  request = store.get(id)
+            request.onsuccess = e => {
+                resolve(e.target.result)
+            }
+        }
+    })
 }
 
 const writeDb = (id, compName, homeTeamName, homeTeamId, awayTeamName, awayTeamid, date, url, page) => {
@@ -35,79 +76,6 @@ const writeDb = (id, compName, homeTeamName, homeTeamId, awayTeamName, awayTeami
     loadMatch(url, page)
 }
 
-const readDb = () => {
-    const open = indexedDB.open(db_name, db_version)
-    open.onsuccess = () => {
-        const db = open.result,
-              tx = db.transaction(db_table, 'readonly'),
-              store = tx.objectStore(db_table),
-              request = store.getAll(),
-              dbData = document.querySelector('.row.bookmark')
-        dbData.innerHTML = ''
-        request.onsuccess = element => {
-        const result = element.target.result
-        result.forEach(e => {
-            window.deleteDb = deleteDb
-            dbData.innerHTML += `
-                <div class="col s12 m6 l3">
-                <div class="icards">
-                    <div class="title">
-                    <h5>${e.compName}</h5>
-                    </div>
-                    <div class="info">
-                    <div>
-                        <p>${e.homeTeamName}</p>
-                        <img src="${crest_url}${e.homeTeamId}.svg" alt="">
-                    </div>
-                    <p>VERZUZ</p>
-                    <!-- maybe a swordsfight scene or something -->
-                    <div>
-                        <p>${e.awayTeamName}</p>
-                        <img src="${crest_url}${e.awayTeamId}.svg" alt="">
-                    </div>
-                    </div>
-                    <div class="setting">
-                    <div>
-                        <p>${e.date}</p>
-                    </div>
-                    <div>
-                        <a class="waves-effect waves-light btn-small" onclick="deleteDb(${e.id})">Delete</a>
-                    </div>
-                    </div>
-                </div>
-                </div>`;
-                
-        });
-    }
-  }
-}
-
-const deleteDb = (id) => {
-    const open = indexedDB.open(db_name, db_version)
-    open.onsuccess = () => {
-        const   db = open.result,
-                tx = db.transaction(db_table, 'readwrite'),
-                request = tx.objectStore(db_table)
-        request.delete(id)
-    }
-    readDb()
-}
-
-const matchDb = (id) => {
-    return new Promise( (resolve, reject)=> {
-        const open = indexedDB.open(db_name, db_version)
-        open.onsuccess = () => {
-            const db = open.result,
-                  tx = db.transaction(db_table, 'readonly'),
-                  store = tx.objectStore(db_table),
-                  request = store.get(id)
-            request.onsuccess = e => {
-                resolve(e.target.result)
-            }
-        }
-    })
-}
-
 const cancelDb = (id, url, page) => {
     const open = indexedDB.open(db_name, db_version)
     open.onsuccess = () => {
@@ -120,4 +88,4 @@ const cancelDb = (id, url, page) => {
 }
 
 
-export {writeDb, readDb, matchDb, cancelDb};
+export {writeDb, readDb, matchDb, cancelDb, deleteDb};

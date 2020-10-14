@@ -1,6 +1,6 @@
 {
-    "name": "MovieDB",
-    "short_name": "MovieDB",
+    "name": "Football-PWA",
+    "short_name": "FootballPWA",
     "description": "Aplikasi PWA pertama saya",
     "start_url": "index.html",
     "display": "standalone",
