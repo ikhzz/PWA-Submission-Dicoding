@@ -9,8 +9,8 @@ let 	links = document.querySelectorAll('.link a')
 		
 document.addEventListener('DOMContentLoaded', () => {        
     M.Sidenav.init(elems);
-    //loadPage('home');
-	link(links)
+    loadPage('home');
+	  link(links)
 });
    
 const link = (data) => {

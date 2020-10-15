@@ -1,4 +1,4 @@
-const CACHE_NAME = "firstpwa-v4";
+const CACHE_NAME = "firstpwa-v5";
 const urlsToCache = [
   "/",
   "manifest.json",
@@ -69,6 +69,26 @@ self.addEventListener('fetch', e => {
   )
 })
 
+self.addEventListener('push', event => {
+  let msg;
+  if (event.data) {
+    msg = event.data.text();
+  } else {
+    msg = 'Push message no payload';
+  }
+  const options = {
+    body: msg,
+    icon: 'img/notification.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    }
+  };
+  event.waitUntil(
+    self.registration.showNotification('Football', options)
+  );
+});
 
 // self.addEventListener('notificationclick', function (event) {
 //   if (!event.action) {
@@ -91,31 +111,3 @@ self.addEventListener('fetch', e => {
 //   }
 //   event.notification.close();
 // });
-
-
-self.addEventListener('push', function(event) {
-  let body;
-  if (event.data) {
-    body = event.data.text();
-  } else {
-    body = 'Push message no payload';
-  }
-  let options = {
-    body: body,
-    icon: 'img/notification.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: 1
-    }
-  };
-  console.log('anything happen?')
-  const test = event.data.text()
-  console.log(test)
-  event.waitUntil(
-    
-    self.registration.showNotification(test),
-    console.log('is anything here?')
-
-  );
-});
