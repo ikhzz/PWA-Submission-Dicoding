@@ -18,13 +18,13 @@ const link = (data) => {
         elements.addEventListener('click', () => {
             const page = elements.getAttribute('href').split('#')[1]
             
-            if(page == 'home') {
+            if(page === 'home') {
               loadPage(page)
-            } else if(page == 'teams') {
+            } else if(page === 'teams') {
               loadTeam(api_url, page)
-            } else if(page == 'bookmark'){
+            } else if(page === 'bookmark'){
               loadBookmark(page)
-            } else if(page == 'matches') {
+            } else if(page === 'matches') {
 				      const data = elements.getAttribute('data-id')
 				      loadMatch(`${api_url}${data}/${page}?status=SCHEDULED`, page)
 			      } else {

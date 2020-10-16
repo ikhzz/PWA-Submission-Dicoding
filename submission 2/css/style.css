@@ -58,7 +58,7 @@ a.sidenav-trigger {
     border-radius: 50%;
 }
 .home-icon {
-    margin: 10px auto 0px;
+    margin: 10px auto 0;
     display: table;
 }
 .home-icon a{
