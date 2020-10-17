@@ -19,6 +19,7 @@
 }
 .sidenav li a {
     border-radius: 10px;
+    color: white;
 }
 .brand-logo img {
     height: 64px;
